@@ -4,20 +4,36 @@ import AppCenter
 import AppCenterAnalytics
 import AppCenterCrashes
 import AppCenterPush
+import UserNotifications
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions _: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         MSAppCenter.start("7371e93b-bb01-411a-bc97-a1bb71e1cf20", withServices: [
             MSAnalytics.self,
             MSCrashes.self,
             MSPush.self,
         ])
+        
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.badge, .alert, .sound]) { (granted, error) in
+            if (error != nil) {
+                print(error!);
+            }
+        }
+        
+        application.registerForRemoteNotifications()
+        
         return true
+    }
+    
+    private func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject]) {
+        print("Received: \(userInfo)")
     }
 
     func applicationWillResignActive(_: UIApplication) {
